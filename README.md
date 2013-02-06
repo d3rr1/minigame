@@ -1,4 +1,4 @@
 minigame
 ========
 
-## The minigame repository for the partyplayer-app
+The minigame repository for the partyplayer-app.

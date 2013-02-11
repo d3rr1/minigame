@@ -1,14 +1,14 @@
 <!DOCTYPE html> 
 <html> 
 <head> 
-	<title>MINIGAME HOST</title> 
+	<title>MINIGAME GUEST</title> 
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" />
 	<script src="js/common/jquery-1.8.2.min.js"></script>
 	<script src="js/common/jquery.mobile-1.2.0.min.js"></script>
 	<script src="js/common/a2a-stub.js"></script>
 	<script src="js/common/log.js"></script>
-	<script src="js/host.js"></script>
+	<script src="js/guest.js"></script>
 </head> 
 <body> 
 
@@ -18,15 +18,26 @@
 		<h1>My Title</h1>
 	</div><!-- /header -->
 
-	<div id="content" data-role="content">	
-	    <h1>The Minigame Test Host</h1>
+	<div id="content" data-role="content">
+	    <h1>The Minigame Test Guest</h1>
+	    <div id="guest">
+	        <ul data-role="listview">
+	        </ul>
+	    </div>
+	    
+	    <div id="game">
+	        <ul data-role="listview">
+	        </ul>
+	    </div>
+	    
+	    <div id="result"></div>
 	</div><!-- /content -->
 	
     <div data-role="footer">
         <h1>The Footer</h1>
      </div>
      
-     <div id="log"></div>
+     <div id="log"></div><!-- log -->
 </div><!-- /page -->
 
 </body>

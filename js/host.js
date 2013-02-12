@@ -1,7 +1,18 @@
 var minigame = {};
 minigame.main = {};
 
-var gamers = [];
+var gameData = [
+    item = {userID:'uid1', funnelID:'fid1', funnelName:'song1'},
+    item = {userID:'uid2', funnelID:'fid3', funnelName:'song3'},
+    item = {userID:'uid2', funnelID:'fid4', funnelName:'song4'},
+    item = {userID:'uid3', funnelID:'fid5', funnelName:'song5'},
+    item = {userID:'uid1', funnelID:'fid2', funnelName:'song2'},
+    item = {userID:'uid3', funnelID:'fid6', funnelName:'song6'},
+    item = {userID:'uid1', funnelID:'fid7', funnelName:'song7'},
+    item = {userID:'uid1', funnelID:'fid8', funnelName:'song8'},
+];
+
+
 /**
  * Initialises the websocket and set up the communication protocol
  * @param hostorguest either 'host' or 'guest', relevant for a2a-stub behaveour
@@ -34,44 +45,10 @@ minigame.init = function(hostorguest) {
     });
 }
 
-minigame.main.onconnect = function(params){
-    var state = {};
-    state.id = params;
-    state.choice = '';
-    gamers.push(state);
-    console.log(gamers);
-}; 
-
-minigame.main.onchoice = function(params){
-    for(var i = 0; i < gamers.length; i++){
-        if(gamers[i].id == params.id){
-            gamers[i].choice = params.choice;
-            break;
-        }
-    }
-    console.log(gamers);
-    calcWinner();
-};
-
-calcWinner = function(){
-    for(var i = 0; i<gamers.length; i++){
-        if(gamers[i].choice == gamers[i+1].choice){
-            //draw
-            console.log('draw');
-            break;
-        }
-        if(gamers[i].choice > gamers[i+1].choice){
-            //win
-            console.log('player 1 wins');
-            break;
-        }
-        if(gamers[i].choice < gamers[i+1].choice){
-            //lose
-            console.log('player 2 wins');
-            break;
-        }
-    }
+minigame.main.ongetGameData = function(params){
+    minigame.sendMessage({ns:'main', cmd:'data', params:{data:gameData, userID:params.userID}});
 }
+
 
 $(document).ready(function(){
     minigame.init('host');    

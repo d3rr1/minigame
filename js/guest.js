@@ -102,6 +102,7 @@ minigame.main.ondata = function(params){
                 });
                 break;
              case 'opponent':
+                minigame.sendMessage({ns:'main', cmd:'challenge', params:selection});
                 $('#game').append('<h4>Challenging opponent...</h4>');
                 break; 
                 

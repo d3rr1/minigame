@@ -49,6 +49,10 @@ minigame.main.ongetGameData = function(params){
     minigame.sendMessage({ns:'main', cmd:'data', params:{data:gameData, userID:params.userID}});
 }
 
+minigame.main.onchallenge = function(params){
+    console.log(params);
+}
+
 
 $(document).ready(function(){
     minigame.init('host');    

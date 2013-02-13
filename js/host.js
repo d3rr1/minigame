@@ -111,7 +111,28 @@ minigame.calcWinner = function(){
             break;
     }
     
+    //if player1 won switch funnelItems
+    if(endResult.player1.win == 1){
+        minigame.switchItem();
+    }
     minigame.sendMessage({ns:'main', cmd:'result', params:endResult});
+}
+
+minigame.switchItem = function(){
+    var index1, index2, item1, item2;
+    for(var i = 0; i<gameData.length;i++){
+        if(gameData[i].funnelID == selectedData.player1.funnelID){
+            index1 = i;
+            item1 = gameData[i];
+        }
+        if(gameData[i].funnelID == selectedData.player2.funnelID){
+            index2 = i;
+            item2 = gameData[i];
+        }
+    }
+    gameData[index2] = item1;
+    gameData[index1] = item2;
+        
 }
 
 minigame.main.ongetGameData = function(params){
@@ -136,6 +157,7 @@ minigame.main.ongame = function(params){
                                                                     //winstate, 0=draw, 1=win, 2=lost
             minigame.sendMessage({ns:'main', cmd:'result', params:{player1:{userID:selectedData.player1.userID,win:1},
                                                                    player2:{userID:selectedData.player2.userID,win:2}}});
+            minigame.switchItem();
             break;
     }
 }

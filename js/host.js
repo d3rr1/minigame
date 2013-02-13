@@ -47,6 +47,35 @@ minigame.init = function(hostorguest) {
     });
 }
 
+minigame.calcWinner = function(){
+    console.log('calculating winner with...');
+    console.log(selectedData);
+    
+    var p1choice = selectedData.player1.choice;
+    var p2choice = selectedData.player2.choice;
+    
+    //win true/false, will be set in the second switch/case
+    var endResult = {
+        player1 : {
+            userID : selectedData.player1.userID,
+            win : ''
+        },
+        player2 : {  
+            userID : selectedData.player2.userID,
+            win : ''
+        }
+    };
+    
+    //rock=1, paper=2, scissors=3
+    switch(p1choice){
+        case 1:
+            if(p1choice == p2choice){
+            
+            }
+    }
+     
+}
+
 minigame.main.ongetGameData = function(params){
     minigame.sendMessage({ns:'main', cmd:'data', params:{data:gameData, userID:params.userID}});
 }
@@ -58,7 +87,7 @@ minigame.main.onchallenge = function(params){
 
 minigame.main.ongame = function(params){
     //params = accepted: true/false by player2
-    console.log(selectedData);
+    //console.log(selectedData);
     switch(params){
         case true:
             console.log('player2 accepted the challenge');
@@ -66,19 +95,45 @@ minigame.main.ongame = function(params){
             break;
         case false:
             console.log('player2 declined the challenge');
-            minigame.sendMessage({ns:'main', cmd:'result', params:{player1:{userID:selectedData.player1.userID,win:true},
-                                                                   player2:{userID:selectedData.player2.userID,win:false}}});
+                                                                    //winstate, 0=draw, 1=win, 2=lost
+            minigame.sendMessage({ns:'main', cmd:'result', params:{player1:{userID:selectedData.player1.userID,win:1},
+                                                                   player2:{userID:selectedData.player2.userID,win:2}}});
             break;
     }
 }
 
 minigame.main.onchoice = function(params){
-    console.log(params);
+    //console.log(params);
     
     //set choice for correct player
     for(player in selectedData){
-        
+        if((selectedData[player].userID).localeCompare(params.player) == 0){
+            //already convert the choice strings to number for easier comparison
+            //rock=1, paper=2, scissors=3
+            switch(params.choice){
+                case 'rock':
+                    selectedData[player].choice = 1;
+                    break;
+                case 'paper':
+                    selectedData[player].choice = 2;
+                    break;
+                case 'scissors':
+                    selectedData[player].choice = 3;
+                    break;
+            }
+        }
     }
+    
+    for(player in selectedData){
+        if(selectedData[player].hasOwnProperty('choice')){
+            console.log(selectedData[player].userID + ' has made a choice: ' + selectedData[player].choice);
+        } else {
+            console.log(selectedData[player].userID + ' has NOT made a choice, exiting...');
+            return;
+        }
+    }
+    
+    minigame.calcWinner();
 }
 
 $(document).ready(function(){

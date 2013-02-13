@@ -195,16 +195,23 @@ minigame.main.ongame = function(){
 minigame.main.onresult = function(params){    
     for(player in params){
         if(userID.localeCompare(params[player].userID) == 0){
-            //win true/false
+            //winstate, 0=draw, 1=win, 2=lost
             switch(params[player].win){
-                case true:
+                case 0:
+                    $('#game').fadeOut(200, function(){
+                        $(this).html('');
+                        $('<h3>It is a draw!</h3>').appendTo(this);
+                        $(this).fadeIn(200);
+                    });
+                    break;
+                case 1:
                     $('#game').fadeOut(200, function(){
                         $(this).html('');
                         $('<h3>Congratulations... you won!</h3>').appendTo(this);
                         $(this).fadeIn(200);
                     });
                     break;
-                case false:
+                case 2:
                     $('#game').fadeOut(200, function(){
                         $(this).html('');
                         $('<h3>You lost!</h3>').appendTo(this);

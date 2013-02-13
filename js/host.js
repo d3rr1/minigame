@@ -12,6 +12,8 @@ var gameData = [
     item = {userID:'uid1', funnelID:'fid8', funnelName:'song8'},
 ];
 
+var selectedData;
+
 
 /**
  * Initialises the websocket and set up the communication protocol
@@ -50,9 +52,25 @@ minigame.main.ongetGameData = function(params){
 }
 
 minigame.main.onchallenge = function(params){
-    console.log(params);
+    selectedData = params;
+    minigame.sendMessage({ns:'main', cmd:'challenge', params:params.player2.userID});
 }
 
+minigame.main.ongame = function(params){
+    //params = accepted: true/false by player2
+    console.log(selectedData);
+    switch(params){
+        case true:
+            console.log('player2 accepted the challenge');
+            minigame.sendMessage({ns:'main', cmd:'game'});
+            break;
+        case false:
+            console.log('player2 declined the challenge');
+            minigame.sendMessage({ns:'main', cmd:'result', params:{player1:{userID:selectedData.player1.userID,win:true},
+                                                                   player2:{userID:selectedData.player2.userID,win:false}}});
+            break;
+    }
+}
 
 $(document).ready(function(){
     minigame.init('host');    

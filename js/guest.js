@@ -1,8 +1,8 @@
 var minigame = {};
 minigame.main = {};
 
-var userID;
-var gameData;
+var userID = 'uid2';
+var timerChallenger; //var timer for popup
 /**
  * Initialises the websocket and set up the communication protocol
  * @param hostorguest either 'host' or 'guest', relevant for a2a-stub behaveour
@@ -42,14 +42,22 @@ minigame.getGameData = function(){
     minigame.sendMessage({ns:'main', cmd:'getGameData', params:{userID:userID}});
 }
 
+minigame.triggerChallenger = function(accept){
+    $('#popupChallenge').popup('close');
+    $('#popupChallenge').remove();
+    clearInterval(timerChallenger); 
+    minigame.sendMessage({ns:'main',cmd:'game',params:accept});
+}
+
 minigame.main.ondata = function(params){
     //quick hack, exit if userid received is not the same as saved userid
-    if(params.userID =! userID){
+    if(userID.localeCompare(params.userID)!=0){
         return;
     }
+    
     var selection = {};
     
-    gameData = params.data;
+    var gameData = params.data;
     buildGameDataList('self');
     
     function buildGameDataList(type){
@@ -88,7 +96,13 @@ minigame.main.ondata = function(params){
                         $('<li uid=' + gameData[i].userID + ' fid=' + gameData[i].funnelID + '> ' + (i+1) + ': '+ 
                         '   Added by: ' + gameData[i].userID + '    /   Title: ' + gameData[i].funnelName + '</li>').appendTo('ul#gamedata');
                     }
-                };
+                }
+                
+                //if user cant select any items (because for example he selected the first song), go to previous screen
+                if($('ul#gamedata').children().length <= 0){
+                    buildGameDataList('self');
+                }
+                
                 $('ul#gamedata li').bind('click', function(){
                     console.log($(this).attr('fid') + ' selected');
                     selection.player2 = {
@@ -102,6 +116,7 @@ minigame.main.ondata = function(params){
                 });
                 break;
              case 'opponent':
+                //send selected data to host
                 minigame.sendMessage({ns:'main', cmd:'challenge', params:selection});
                 $('#game').append('<h4>Challenging opponent...</h4>');
                 break; 
@@ -114,7 +129,72 @@ minigame.main.ondata = function(params){
     }
 }
 
+minigame.main.onchallenge = function(params){
+    //quick hack, exit if userid received is not the same as saved userid
+    if(userID.localeCompare(params) != 0){
+        return;
+    }
+    
+    //build popup
+    $('<div data-role="popup" id="popupChallenge">' +
+	    '<p>Someone wishes to challenge you!<p>' +
+	    '<div data-role="button" onclick="minigame.triggerChallenger(true)">Accept</div>' +
+	    '<div data-role="button" onclick="minigame.triggerChallenger(false)">Decline</div>' +
+    '</div>').appendTo('#game');
+    
+    $('#content').trigger('create');
+    
+    //hack to disable exiting popup if clicked outside the popup window
+    $("#popupChallenge").on({
+        popupbeforeposition: function () {
+            $('.ui-popup-screen').off();
+        }
+    });
+    
+    //open popup
+    $('#popupChallenge').popup('open');
+    
+    //start counting for accept true/false
+    timerChallenger = setTimeout(function(){minigame.triggerChallenger(false)}, 5000);
+}
 
-$(document).ready(function(){
+minigame.main.ongame = function(){
+    var selection = {};
+    selection.player = userID;
+    
+    //build the Rock-Paper-Scissors screen  
+     $('#game').fadeOut(200, function(){
+        $(this).html('');
+        
+        
+        $(this).fadeIn(200);
+     });
+}
+
+minigame.main.onresult = function(params){    
+    for(player in params){
+        if(userID.localeCompare(params[player].userID) == 0){
+            //win true/false
+            switch(params[player].win){
+                case true:
+                    $('#game').fadeOut(200, function(){
+                        $(this).html('');
+                        $('<h3>Congratulations... you won!</h3>').appendTo(this);
+                        $(this).fadeIn(200);
+                    });
+                    break;
+                case false:
+                    $('#game').fadeOut(200, function(){
+                        $(this).html('');
+                        $('<h3>You lost!</h3>').appendTo(this);
+                        $(this).fadeIn(200);
+                    });
+                    break;                    
+            }
+        }
+    }
+}
+
+$(document).ready(function(){ 
     minigame.init('guest');
 });

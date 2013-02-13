@@ -54,7 +54,7 @@ minigame.calcWinner = function(){
     var p1choice = selectedData.player1.choice;
     var p2choice = selectedData.player2.choice;
     
-    //win true/false, will be set in the second switch/case
+    //win true/false, will be set in the switch/case
     var endResult = {
         player1 : {
             userID : selectedData.player1.userID,
@@ -67,13 +67,51 @@ minigame.calcWinner = function(){
     };
     
     //rock=1, paper=2, scissors=3
+    //0=draw, 1=win, 2=lost
     switch(p1choice){
         case 1:
             if(p1choice == p2choice){
-            
+                endResult.player1.win=0;
+                endResult.player2.win=0;
+            } else if(p1choice < p2choice){
+                if(p2choice == 2){
+                    endResult.player1.win=2;
+                    endResult.player2.win=1;
+                } else if(p2choice==3){
+                    endResult.player1.win=1;
+                    endResult.player2.win=2;
+                }   
             }
+            break;
+        case 2:
+            if(p1choice == p2choice){
+                endResult.player1.win=0;
+                endResult.player2.win=0;
+            } else if(p1choice < p2choice){
+                endResult.player1.win=2;
+                endResult.player2.win=1;
+            } else if(p1choice > p2choice){
+                endResult.player1.win=1;
+                endResult.player2.win=2;
+            }
+            break;
+        case 3:
+            if(p1choice == p2choice){
+                endResult.player1.win=0;
+                endResult.player2.win=0;
+            } else if(p1choice > p2choice){
+                if(p2choice == 2){
+                    endResult.player1.win=1;
+                    endResult.player2.win=2;
+                } else if(p2choice==1){
+                    endResult.player1.win=2;
+                    endResult.player2.win=1;
+                }   
+            }
+            break;
     }
-     
+    
+    minigame.sendMessage({ns:'main', cmd:'result', params:endResult});
 }
 
 minigame.main.ongetGameData = function(params){

@@ -72,6 +72,15 @@ minigame.main.ongame = function(params){
     }
 }
 
+minigame.main.onchoice = function(params){
+    console.log(params);
+    
+    //set choice for correct player
+    for(player in selectedData){
+        if(selectedData[player].userID
+    }
+}
+
 $(document).ready(function(){
     minigame.init('host');    
 });

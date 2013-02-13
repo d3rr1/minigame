@@ -165,12 +165,33 @@ minigame.main.ongame = function(){
     //build the Rock-Paper-Scissors screen  
      $('#game').fadeOut(200, function(){
         $(this).html('');
+        $('<div id="btngrp" data-role="controlgroup" data-type="horizontal">').appendTo(this);
+        $('<button id="rock">Rock</button>').click(function(e){
+            applyChoice($(this));
+        }).appendTo('#btngrp');
+        $('<button id="paper">Paper</button>').click(function(){
+            applyChoice($(this));
+        }).appendTo('#btngrp');
+        $('<button id="scissors">Scissors</button>').click(function(){
+            applyChoice($(this));
+        }).appendTo('#btngrp');
         
-        
+        $('#content').trigger('create');
         $(this).fadeIn(200);
      });
+     
+     var applyChoice = function(o){
+        selection.choice = $(o).attr('id');
+        console.log(selection);
+        minigame.sendMessage({ns:'main', cmd:'choice', params:selection});
+        
+        $('#game').fadeOut(200, function(){
+            $(this).html('');
+            $('<h3>Awaiting results...</h3>').appendTo(this);
+            $(this).fadeIn(200);
+        });
+     }
 }
-
 minigame.main.onresult = function(params){    
     for(player in params){
         if(userID.localeCompare(params[player].userID) == 0){

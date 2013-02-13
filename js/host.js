@@ -77,7 +77,7 @@ minigame.main.onchoice = function(params){
     
     //set choice for correct player
     for(player in selectedData){
-        if(selectedData[player].userID
+        
     }
 }
 
